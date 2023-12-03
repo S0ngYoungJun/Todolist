@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import './styles/TodoList.scss';
 
 const App: React.FC = () => {
   const [todos, setTodos] = useState([]);
@@ -12,13 +13,20 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="todo-list">
       <h2>Todo List</h2>
-      <ul>
-        {todos.map((todo: any) => (
-          <li key={todo.id}>{todo.title}</li>
-        ))}
-      </ul>
+      {todos.length === 0 ? (
+        <p>No todos found.</p>
+      ) : (
+        <ul>
+          {todos.map((todo: any) => (
+            <li key={todo.id}>
+              <span>{todo.title}</span>
+              <button>Delete</button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
