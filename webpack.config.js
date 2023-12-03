@@ -31,4 +31,8 @@ module.exports = {
     static: path.resolve(__dirname, 'dist'),
     hot: true,
   },
+  mode: 'production', // 추가: 프로덕션 모드로 설정
+  optimization: {
+    minimize: true, // 추가: 코드 최소화 활성화
+  },
 };

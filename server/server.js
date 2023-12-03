@@ -6,6 +6,7 @@ const mariadb = require('mariadb');
 const app = express();
 const port = 5000;
 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // MariaDB 연결 설정
@@ -29,6 +30,43 @@ app.get('/api/todos', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching todos:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// API 엔드포인트: 새로운 할 일 추가
+app.post('/api/todos', async (req, res) => {
+  const { title } = req.body;
+  if (!title) {
+    return res.status(400).json({ error: 'Title is required' });
+  }
+
+  try {
+    const conn = await pool.getConnection();
+    const result = await conn.query('INSERT INTO todos (title) VALUES (?)', [title]);
+    conn.release();
+
+    const newTodoId = result.insertId.toString(); // BigInt를 문자열로 변환
+    const newTodo = { id: newTodoId, title };
+
+    res.json(newTodo);
+  } catch (error) {
+    console.error('Error adding todo:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.delete('/api/todos/:id', async (req, res) => {
+  const todoId = req.params.id;
+
+  try {
+    const conn = await pool.getConnection();
+    await conn.query('DELETE FROM todos WHERE id = ?', [todoId]);
+    conn.release();
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting todo:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
