@@ -9,10 +9,10 @@ app.use(bodyParser.json());
 
 // MariaDB 연결 설정
 const pool = mariadb.createPool({
-  host: 'your-database-host',
-  user: 'your-database-user',
-  password: 'your-database-password',
-  database: 'your-database-name',
+  host: 'localhost',
+  user: 'root',
+  password: '723546',
+  database: 'todolist',
   connectionLimit: 5,
 });
 
