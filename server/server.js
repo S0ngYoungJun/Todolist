@@ -15,6 +15,7 @@ const pool = mariadb.createPool({
   user: 'root',
   password: '723546',
   database: 'todolist',
+  port:3307,
   connectionLimit: 5,
 });
 
@@ -52,6 +53,25 @@ app.post('/api/todos', async (req, res) => {
     res.json(newTodo);
   } catch (error) {
     console.error('Error adding todo:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.patch('/api/todos/:id', async (req, res) => {
+  const todoId = req.params.id;
+  const { completed } = req.body;
+
+  try {
+    console.log('Received PATCH request. Todo ID:', todoId, 'Completed:', completed);
+
+    const conn = await pool.getConnection();
+    await conn.query('UPDATE todos SET completed = ? WHERE id = ?', [completed, todoId]);
+    conn.release();
+
+    console.log('Todo updated successfully.');
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error updating todo:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
